@@ -8,15 +8,15 @@ def menu():
     choice = int(input('Enter your choice: '))
 
     if choice == 1:
-        True
-        #recombobulate(True)
+        new_id, new_sequence = recombobulate(True)
+        print("The optimized gene sequence for ", new_id, " is:", "\n", new_sequence)
     elif choice == 2:
-        False
-        #recombobulate(False)
+        new_id, new_sequence = recombobulate(False)
+        print("The de-optimized gene sequence for ", new_id, " is:", "\n", new_sequence)
     elif choice == 3:
         exit()
     else:
-        print("Please enter a number between 1 and 3.")
+        print("Please follow directions and enter a number between 1 and 3.")
 """ A main menu """
 
 
@@ -49,26 +49,52 @@ def load_csv_file():
         codon_acid_dictionary[code] = acid
 
         if acid not in acid_max_frequency_dictionary:
-            acid_max_frequency_dictionary[acid] = freq
-        elif freq < acid_max_frequency_dictionary[acid]:
-            acid_max_frequency_dictionary[acid] = freq
+            acid_max_frequency_dictionary[acid] = (freq, code)
+        elif freq > acid_max_frequency_dictionary[acid][0]:
+            acid_max_frequency_dictionary[acid] = (freq, code)
 
         if acid not in acid_min_frequency_dictionary:
-            acid_min_frequency_dictionary[acid] = freq
-        elif freq > acid_min_frequency_dictionary[acid]:
-            acid_min_frequency_dictionary[acid] = freq
+            acid_min_frequency_dictionary[acid] = (freq, code)
+        elif freq < acid_min_frequency_dictionary[acid][0]:
+            acid_min_frequency_dictionary[acid] = (freq, code)
 
     return codon_acid_dictionary, acid_max_frequency_dictionary, acid_min_frequency_dictionary
 
 
+def recombobulate(bool):
+    gene_id_input = input("Enter the gene to edit: ")
+
+    if gene_id_input not in fasta_data_file:
+        print("gene ID not in database to edit")
+        menu()
+
+    if bool:
+        data_base = acid_max_frequency_data
+    else:
+        data_base = acid_min_frequency_data
+
+    gene_to_edit = fasta_data_file[gene_id_input]
+
+    for c in range(0, len(gene_to_edit) - 3, 3):
+        next_codon = gene_to_edit[c:c + 3]
+        replacement = data_base[codon_acid_data[next_codon]][1]
+        gene_to_edit.replace(next_codon, replacement)
+
+    return gene_id_input, gene_to_edit
+
+
 fasta_data_file = load_fasta_file()
-
 codon_acid_data, acid_max_frequency_data, acid_min_frequency_data = load_csv_file()
+while(True):
+    menu()
 
 
-print(codon_acid_data)
-print(acid_max_frequency_data)
-print(acid_min_frequency_data)
 
-# print(csv_data)
 
+
+# print(codon_acid_data)
+# print(acid_max_frequency_data)
+# print(acid_min_frequency_data)
+#
+# print(acid_max_frequency_data['S'][1])
+# print(acid_min_frequency_data['S'][1])
