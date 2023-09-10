@@ -1,24 +1,44 @@
 def menu():
-    print("Please select an option: \n: ",
+    print("Please select an option: \n",
           "1) Optimize a gene \n",
           "2) De-optimize a gene \n",
           "3) Exit the program \n",
           "Enter the integer for your choice: ")
 
-    choice = int(input('Enter your choice: '))
+    nonsense = input('Enter your choice: ')
+    if nonsense.isdigit():
+        choice = int(nonsense)
+    else:
+        choice = 0
 
     if choice == 1:
-        new_id, new_sequence = recombobulate(True)
-        print("The optimized gene sequence for ", new_id, " is:", "\n", new_sequence)
+        gene_id, new_sequence = recombobulate(True)
+        print("The optimized gene sequence for ", gene_id, " is:", "\n", new_sequence)
+        save_gene(gene_id, new_sequence, "optimized")
     elif choice == 2:
-        new_id, new_sequence = recombobulate(False)
-        print("The de-optimized gene sequence for ", new_id, " is:", "\n", new_sequence)
+        gene_id, new_sequence = recombobulate(False)
+        print("The de-optimized gene sequence for ", gene_id, " is:", "\n", new_sequence)
+        save_gene(gene_id, new_sequence, "deoptimized")
     elif choice == 3:
         exit()
     else:
         print("Please follow directions and enter a number between 1 and 3.")
-""" A main menu """
 
+    """ A main menu. Its glory-full"""
+
+
+def save_gene(gene_id, new_sequence, change_type):
+    save_choice = input("Would you like to save Y/N: ").upper()
+    if save_choice == "Y":
+        filename = gene_id + "_" + change_type + ".fasta"
+        file = open(filename, "w")
+        line = [">" + gene_id + "\n", new_sequence + "\n"]
+        file.writelines(line)
+        file.close()
+    else:
+        menu()
+
+    """Function to create the file name and open a new file and write the data"""
 
 def load_fasta_file():
     fasta_data = list(open('project_data\Scer-1.fasta'))
@@ -32,6 +52,9 @@ def load_fasta_file():
     print("The total number of sequences imported was ", gene_counter)
 
     return fasta_data_dictionary
+
+    """Loads the fasta data"""
+
 
 
 def load_csv_file():
@@ -60,9 +83,12 @@ def load_csv_file():
 
     return codon_acid_dictionary, acid_max_frequency_dictionary, acid_min_frequency_dictionary
 
+    """Loads the csv data into 3 dictionarys"""
+
 
 def recombobulate(bool):
-    gene_id_input = input("Enter the gene to edit: ")
+    gene_id_input = input("Enter the gene to edit: ").upper()
+    edited_gene = ""
 
     if gene_id_input not in fasta_data_file:
         print("gene ID not in database to edit")
@@ -75,12 +101,14 @@ def recombobulate(bool):
 
     gene_to_edit = fasta_data_file[gene_id_input]
 
-    for c in range(0, len(gene_to_edit) - 3, 3):
+    for c in range(0, len(gene_to_edit), 3):
         next_codon = gene_to_edit[c:c + 3]
         replacement = data_base[codon_acid_data[next_codon]][1]
-        gene_to_edit.replace(next_codon, replacement)
+        edited_gene += replacement
 
-    return gene_id_input, gene_to_edit
+    return gene_id_input, edited_gene
+
+    """Does the reconfiguring of the gene sequence"""
 
 
 fasta_data_file = load_fasta_file()
@@ -90,11 +118,3 @@ while(True):
 
 
 
-
-
-# print(codon_acid_data)
-# print(acid_max_frequency_data)
-# print(acid_min_frequency_data)
-#
-# print(acid_max_frequency_data['S'][1])
-# print(acid_min_frequency_data['S'][1])
