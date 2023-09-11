@@ -1,4 +1,5 @@
 def menu():
+    """ A main menu. Its glory-full"""
     print("Please select an option: \n",
           "1) Optimize a gene \n",
           "2) De-optimize a gene \n",
@@ -24,10 +25,9 @@ def menu():
     else:
         print("Please follow directions and enter a number between 1 and 3.")
 
-    """ A main menu. Its glory-full"""
-
-
+    
 def save_gene(gene_id, new_sequence, change_type):
+    """Function to create the file name and open a new file and write the data"""
     save_choice = input("Would you like to save Y/N: ").upper()
     if save_choice == "Y":
         filename = gene_id + "_" + change_type + ".fasta"
@@ -38,9 +38,9 @@ def save_gene(gene_id, new_sequence, change_type):
     else:
         menu()
 
-    """Function to create the file name and open a new file and write the data"""
 
 def load_fasta_file():
+    """Loads the fasta data"""
     fasta_data = list(open('project_data\Scer-1.fasta'))
     fasta_data_dictionary = dict()
     gene_counter = 0
@@ -53,11 +53,9 @@ def load_fasta_file():
 
     return fasta_data_dictionary
 
-    """Loads the fasta data"""
-
-
 
 def load_csv_file():
+    """Loads the csv data into 3 dictionary"""
     csv_data = list(open('project_data\Ecol_codon_freqs-1.csv'))
     codon_acid_dictionary = dict()
     acid_max_frequency_dictionary = dict()
@@ -83,10 +81,9 @@ def load_csv_file():
 
     return codon_acid_dictionary, acid_max_frequency_dictionary, acid_min_frequency_dictionary
 
-    """Loads the csv data into 3 dictionarys"""
-
 
 def recombobulate(bool):
+    """Does the reconfiguring of the gene sequence"""
     gene_id_input = input("Enter the gene to edit: ").upper()
     edited_gene = ""
 
@@ -107,8 +104,6 @@ def recombobulate(bool):
         edited_gene += replacement
 
     return gene_id_input, edited_gene
-
-    """Does the reconfiguring of the gene sequence"""
 
 
 fasta_data_file = load_fasta_file()
